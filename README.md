@@ -161,14 +161,14 @@ cd envs/dev   # or staging/prod
 terraform destroy
 ```
 
-📝 Notes
--State isolation: Each environment uses its own remote state file in S3
+## 📝 Notes
 
--Locking: DynamoDB prevents concurrent modifications
-
--Naming: Resource names include environment for clarity
-
--Secrets: Do not commit sensitive values (keep them in .tfvars or use AWS Secrets Manager)
+- **State isolation** – Each environment stores its own remote state file in **S3**, ensuring no overlap between environments.  
+- **Locking** – **DynamoDB** is used to prevent concurrent Terraform operations that could cause state corruption.  
+- **Naming** – All resource names include the environment name for clarity and separation.  
+- **Secrets** – Never commit sensitive values to the repository.  
+  - Store them in `.tfvars` files (excluded via `.gitignore`)  
+  - Or manage them securely using **AWS Secrets Manager**
 
 # Acknowledgements
 This project was created by taking reference and inspiration from Terraform with Shubham.

@@ -177,3 +177,7 @@ Naming: Resource names include environment for clarity
 
 Secrets: Do not commit sensitive values (keep them in .tfvars or use AWS Secrets Manager)
 
+# Acknowledgements
+This project was created by taking reference and inspiration from Terraform with Shubham.
+Check out Terraform with Shubham on YouTube for great Terraform tutorials.
+

@@ -121,32 +121,25 @@ terraform apply
 | staging     | myapp-staging-bucket  | 2         | t3.small   | staging-tws-demo-app-table     |
 | prod        | myapp-prod-bucket     | 3         | t3.medium  | prod-tws-demo-app-table        |
 
+## 📦 Modules Overview
 
-📦 Modules Overview
-S3 Module (modules/s3)
-Creates private, versioned S3 bucket
+### **S3 Module** (`modules/s3`)
+- Creates a **private, versioned S3 bucket**
+- Blocks all **public access**
+- Applies **tags** from the `tags` variable
 
-Public access blocked
+### **DB Module** (`modules/db`)
+- Creates a **DynamoDB table**
+- **Primary key:** `userID`
+- **Billing mode:** `PAY_PER_REQUEST`
+- Uses **environment-specific naming** for table names
 
-Tags applied from tags variable
+### **EC2 Module** (`modules/ec2`)
+- Provisions **multiple EC2 instances**
+- Runs **Amazon Linux 2 AMI**
+- Configurable **instance type** and **volume size**
+- Tags applied for each environment
 
-DB Module (modules/db)
-Creates DynamoDB table
-
-Primary key: userID
-
-Billing mode: PAY_PER_REQUEST
-
-Environment-specific naming
-
-EC2 Module (modules/ec2)
-Provisions multiple EC2 instances
-
-Uses Amazon Linux 2 AMI
-
-Configurable instance type & volume size
-
-Tagged per environment
 
 🔄 Updating Infrastructure
 To make changes:
@@ -169,13 +162,13 @@ terraform destroy
 ```
 
 📝 Notes
-State isolation: Each environment uses its own remote state file in S3
+-State isolation: Each environment uses its own remote state file in S3
 
-Locking: DynamoDB prevents concurrent modifications
+-Locking: DynamoDB prevents concurrent modifications
 
-Naming: Resource names include environment for clarity
+-Naming: Resource names include environment for clarity
 
-Secrets: Do not commit sensitive values (keep them in .tfvars or use AWS Secrets Manager)
+-Secrets: Do not commit sensitive values (keep them in .tfvars or use AWS Secrets Manager)
 
 # Acknowledgements
 This project was created by taking reference and inspiration from Terraform with Shubham.

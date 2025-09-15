@@ -170,6 +170,122 @@ terraform destroy
   - Store them in `.tfvars` files (excluded via `.gitignore`)  
   - Or manage them securely using **AWS Secrets Manager**
 
+---
+
+1. **Tool/Flow Diagram** → showing Terraform, remote state (S3 + DynamoDB), and AWS resource creation.
+2. **Component/Module Diagram** → showing how environments (dev, staging, prod) use modules (s3, db, ec2).
+
+---
+
+## 1️⃣ Terraform Flow Diagram (Tools + Remote State)
+
+```text
+                 ┌───────────────────────────┐
+                 │       Developer CLI       │
+                 │ terraform init/plan/apply │
+                 └─────────────┬─────────────┘
+                               │
+                               ▼
+                   ┌─────────────────────┐
+                   │   Terraform Core    │
+                   └─────────┬──────────┘
+                             │
+          ┌──────────────────┴───────────────────┐
+          │                                      │
+          ▼                                      ▼
+┌─────────────────────┐              ┌─────────────────────┐
+│  Remote State Store │              │   AWS Resources     │
+│  (S3 bucket +       │              │  (Provisioned via   │
+│   DynamoDB locking) │              │   Terraform modules)│
+└─────────────────────┘              └─────────────────────┘
+```
+
+---
+
+## 2️⃣ Component Diagram (Environments → Modules → Resources)
+
+```text
+                 ┌─────────────────────────────┐
+                 │        Environments         │
+                 │   (envs/dev, staging, prod) │
+                 └───────────────┬─────────────┘
+                                 │
+                ┌────────────────┼────────────────┐
+                │                │                │
+                ▼                ▼                ▼
+         ┌───────────┐    ┌───────────┐    ┌───────────┐
+         │    dev    │    │  staging  │    │   prod    │
+         └─────┬─────┘    └─────┬─────┘    └─────┬─────┘
+               │                │                │
+               ▼                ▼                ▼
+       ┌─────────────┐   ┌─────────────┐   ┌─────────────┐
+       │   Modules    │   │   Modules    │   │   Modules    │
+       │ (re-usable)  │   │ (re-usable)  │   │ (re-usable)  │
+       └───┬─────┬────┘   └───┬─────┬────┘   └───┬─────┬────┘
+           │     │            │     │            │     │
+     ┌─────▼─┐ ┌─▼─────┐ ┌────▼─┐ ┌─▼─────┐ ┌────▼─┐ ┌─▼─────┐
+     │  S3   │ │  DB   │ │  S3  │ │  DB   │ │  S3  │ │  DB   │
+     └───────┘ └───────┘ └──────┘ └───────┘ └──────┘ └───────┘
+         │         │         │        │         │        │
+         ▼         ▼         ▼        ▼         ▼        ▼
+     ┌──────────────────────────────────────────────────────────┐
+     │                       EC2 Instances                      │
+     │ (Count & type vary per environment: dev=1, stag=2, prod=3)│
+     └──────────────────────────────────────────────────────────┘
+```
+
+
+---
+
+### Terraform Flow
+
+```mermaid
+flowchart TD
+    A[Developer CLI: terraform init/plan/apply] --> B[Terraform Core]
+
+    B --> C[Remote State: S3 + DynamoDB Locking]
+    B --> D[AWS Resources via Terraform Modules]
+```
+
+---
+
+### Environment & Module Structure
+
+```mermaid
+flowchart TD
+    subgraph Environments
+        E1[dev]
+        E2[staging]
+        E3[prod]
+    end
+
+    E1 --> M1[Modules]
+    E2 --> M2[Modules]
+    E3 --> M3[Modules]
+
+    subgraph Modules
+        direction LR
+        S3[S3 Module]
+        DB[DynamoDB Module]
+        EC2[EC2 Module]
+    end
+
+    M1 --> S3
+    M1 --> DB
+    M1 --> EC2
+
+    M2 --> S3
+    M2 --> DB
+    M2 --> EC2
+
+    M3 --> S3
+    M3 --> DB
+    M3 --> EC2
+```
+
+---
+
+
 # Acknowledgements
 This project was created by taking reference and inspiration from Terraform with Shubham.
 Check out Terraform with Shubham on YouTube for great Terraform tutorials.

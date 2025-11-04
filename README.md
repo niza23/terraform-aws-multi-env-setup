@@ -1,7 +1,7 @@
 
 # Terraform Multi-Environment AWS Infrastructure
 
-This repository contains a **Terraform** configuration for deploying AWS infrastructure across multiple environments (**dev**, **staging**, **prod**) using reusable **modules**.
+This repository contains a **Terraform** configuration for deploying AWS infrastructure across multiple environments (**dev**, **staging**, **prod**) using reusable modules.
 
 The setup provisions:
 - **S3 bucket** (per environment)

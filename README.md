@@ -11,7 +11,7 @@ The setup provisions:
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Structure:
 
 ```bash
 terraform-multi-env/
